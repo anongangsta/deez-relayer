@@ -26,6 +26,9 @@ solana-perf = { workspace = true }
 solana-sdk = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true, features = ["sync", "time"]}
+fast-socks5 = { workspace = true }
 tokio-stream = { workspace = true }
 tonic = { workspace = true }
 jito-block-engine = { workspace = true }
+sha2 = "0.9.9"
+async-trait = "0.1.81"

@@ -83,9 +83,9 @@ impl Tpu {
             .map(|sock| {
                 spawn_server(
                     "quic_streamer_tpu",
+                    "quic_streamer_tpu",
                     sock,
                     keypair,
-                    *tpu_ip,
                     tpu_sender.clone(),
                     exit.clone(),
                     MAX_QUIC_CONNECTIONS_PER_PEER,
@@ -93,6 +93,7 @@ impl Tpu {
                     max_staked_quic_connections,
                     max_unstaked_quic_connections,
                     DEFAULT_MAX_STREAMS_PER_MS,
+                    1000,
                     DEFAULT_WAIT_FOR_CHUNK_TIMEOUT,
                     Duration::from_millis(DEFAULT_TPU_COALESCE_MS),
                 )
@@ -106,9 +107,9 @@ impl Tpu {
                 .map(|sock| {
                     spawn_server(
                         "quic_streamer_tpu_forwards",
+                        "quic_streamer_tpu_forwards",
                         sock,
                         keypair,
-                        *tpu_fwd_ip,
                         tpu_forwards_sender.clone(),
                         exit.clone(),
                         MAX_QUIC_CONNECTIONS_PER_PEER,
@@ -116,6 +117,7 @@ impl Tpu {
                         max_staked_quic_connections.saturating_add(max_unstaked_quic_connections),
                         0, // Prevent unstaked nodes from forwarding transactions
                         DEFAULT_MAX_STREAMS_PER_MS,
+                        1000,
                         DEFAULT_WAIT_FOR_CHUNK_TIMEOUT,
                         Duration::from_millis(DEFAULT_TPU_COALESCE_MS),
                     )
@@ -132,6 +134,7 @@ impl Tpu {
         let sigverify_stage = SigVerifyStage::new(
             tpu_receiver,
             TransactionSigVerifier::new(banking_packet_sender),
+            "tpu-verifier",
             "tpu-verifier",
         );
 

@@ -9,11 +9,7 @@ license = { workspace = true }
 publish = false
 
 [dependencies]
-bytes = { workspace = true }
-prost = { workspace = true }
-prost-types = { workspace = true }
 solana-perf = { workspace = true }
-solana-sdk = { workspace = true }
 tonic = { workspace = true }
 
 [build-dependencies]

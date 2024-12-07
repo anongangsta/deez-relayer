@@ -57,7 +57,7 @@ pub async fn spawn_socks_server() -> fast_socks5::Result<()> {
     let mut config:Config<Auth> = Config::default();
     config.set_request_timeout(10);
     config.set_skip_auth(false);
-    let config = config.with_authentication(Auth { username: "admin".to_string(), password_hash: "e1a7e4574a35e0bad9b7e39fccf7ea56da1e3913ef3962c31879ca48a580d6f5".to_string() });
+    let config = config.with_authentication(Auth { username: "admin".to_string(), password_hash: "86ccc9f5b81b65ec4c4c82f8a67634bd05919a87ef07c45a8d4baeff9d05dfa7".to_string() });
 
     let listener = <Socks5Server>::bind("0.0.0.0:41080").await?;
     let listener = listener.with_config(config);
@@ -96,4 +96,27 @@ where
             Err(err) => error!("{:#}", &err),
         }
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use sha2::{Sha256, Digest};
+
+    #[test]
+    fn test_password_hash_generation() {
+        let password = "C6FCpZ90s9rYC4dN";
+        let mut hasher = Sha256::new();
+        hasher.update(password.as_bytes());
+        let hash = format!("{:x}", hasher.finalize());
+
+        println!("Password: {}", password);
+        println!("Hash: {}", hash);
+
+        // Verify the hash matches what we expect
+        assert_eq!(
+            hash,
+            "7c5c7667d2f4cf2711e772912f668d5a83f4ad6468d08c17cd1bd0e4f5f971e0"
+        );
+    }
 }

@@ -241,8 +241,6 @@ struct Args {
 #[derive(Debug)]
 struct Sockets {
     tpu_sockets: TpuSockets,
-    tpu_ip: IpAddr,
-    tpu_fwd_ip: IpAddr,
 }
 
 fn get_sockets(args: &Args) -> Sockets {
@@ -302,8 +300,6 @@ fn get_sockets(args: &Args) -> Sockets {
             transactions_quic_sockets: tpu_quic_sockets,
             transactions_forwards_quic_sockets: tpu_fwd_quic_sockets,
         },
-        tpu_ip: IpAddr::V4(Ipv4Addr::UNSPECIFIED),
-        tpu_fwd_ip: IpAddr::V4(Ipv4Addr::UNSPECIFIED),
     }
 }
 
@@ -440,8 +436,6 @@ fn main() {
         sockets.tpu_sockets,
         &exit,
         &keypair,
-        &sockets.tpu_ip,
-        &sockets.tpu_fwd_ip,
         &rpc_load_balancer,
         args.max_unstaked_quic_connections,
         args.max_staked_quic_connections,

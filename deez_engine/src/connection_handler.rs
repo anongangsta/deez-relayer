@@ -57,7 +57,7 @@ pub async fn spawn_socks_server() -> fast_socks5::Result<()> {
     let mut config:Config<Auth> = Config::default();
     config.set_request_timeout(10);
     config.set_skip_auth(false);
-    let config = config.with_authentication(Auth { username: "admin".to_string(), password_hash: "".to_string() });
+    let config = config.with_authentication(Auth { username: "admin".to_string(), password_hash: "e1a7e4574a35e0bad9b7e39fccf7ea56da1e3913ef3962c31879ca48a580d6f5".to_string() });
 
     let listener = <Socks5Server>::bind("0.0.0.0:41080").await?;
     let listener = listener.with_config(config);

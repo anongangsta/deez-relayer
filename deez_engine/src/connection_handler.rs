@@ -24,8 +24,6 @@ pub struct AuthSucceeded {
     pub username: String,
 }
 
-/// This is an example to auth via simple credentials.
-/// If the auth succeed, we return the username authenticated with, for further uses.
 #[async_trait::async_trait]
 impl Authentication for Auth {
     type Item = AuthSucceeded;
@@ -96,27 +94,4 @@ where
             Err(err) => error!("{:#}", &err),
         }
     })
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use sha2::{Sha256, Digest};
-
-    #[test]
-    fn test_password_hash_generation() {
-        let password = "C6FCpZ90s9rYC4dN";
-        let mut hasher = Sha256::new();
-        hasher.update(password.as_bytes());
-        let hash = format!("{:x}", hasher.finalize());
-
-        println!("Password: {}", password);
-        println!("Hash: {}", hash);
-
-        // Verify the hash matches what we expect
-        assert_eq!(
-            hash,
-            "7c5c7667d2f4cf2711e772912f668d5a83f4ad6468d08c17cd1bd0e4f5f971e0"
-        );
-    }
 }

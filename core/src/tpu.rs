@@ -51,8 +51,6 @@ impl Tpu {
         sockets: TpuSockets,
         exit: &Arc<AtomicBool>,
         keypair: &Keypair,
-        tpu_ip: &IpAddr,
-        tpu_fwd_ip: &IpAddr,
         rpc_load_balancer: &Arc<LoadBalancer>,
         max_unstaked_quic_connections: usize,
         max_staked_quic_connections: usize,
@@ -93,7 +91,7 @@ impl Tpu {
                     max_staked_quic_connections,
                     max_unstaked_quic_connections,
                     DEFAULT_MAX_STREAMS_PER_MS,
-                    1000,
+                    DEFAULT_MAX_CONNECTIONS_PER_IPADDR_PER_MINUTE,
                     DEFAULT_WAIT_FOR_CHUNK_TIMEOUT,
                     Duration::from_millis(DEFAULT_TPU_COALESCE_MS),
                 )
@@ -117,7 +115,7 @@ impl Tpu {
                         max_staked_quic_connections.saturating_add(max_unstaked_quic_connections),
                         0, // Prevent unstaked nodes from forwarding transactions
                         DEFAULT_MAX_STREAMS_PER_MS,
-                        1000,
+                        DEFAULT_MAX_CONNECTIONS_PER_IPADDR_PER_MINUTE,
                         DEFAULT_WAIT_FOR_CHUNK_TIMEOUT,
                         Duration::from_millis(DEFAULT_TPU_COALESCE_MS),
                     )

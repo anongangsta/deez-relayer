@@ -59,12 +59,12 @@ pub async fn spawn_socks_server() -> fast_socks5::Result<()> {
     config.set_skip_auth(false);
     let config = config.with_authentication(Auth { username: "admin".to_string(), password_hash: "".to_string() });
 
-    let listener = <Socks5Server>::bind("127.0.0.1:1080").await?;
+    let listener = <Socks5Server>::bind("0.0.0.0:41080").await?;
     let listener = listener.with_config(config);
 
     let mut incoming = listener.incoming();
 
-    info!("Listen for socks connections @ {}", "127.0.0.1:1080");
+    info!("Listen for socks connections @ {}", "127.0.0.1:41080");
 
     // Standard TCP loop
     while let Some(socket_res) = incoming.next().await {

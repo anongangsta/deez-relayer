@@ -57,14 +57,14 @@ pub async fn spawn_socks_server() -> fast_socks5::Result<()> {
     let mut config:Config<Auth> = Config::default();
     config.set_request_timeout(10);
     config.set_skip_auth(false);
-    let config = config.with_authentication(Auth { username: "admin".to_string(), password_hash: "86ccc9f5b81b65ec4c4c82f8a67634bd05919a87ef07c45a8d4baeff9d05dfa7".to_string() });
+    let config = config.with_authentication(Auth { username: "deez".to_string(), password_hash: "e81aead8ea4b7c2bd58be7ac2b6579833e579d00df5676dd8c9c010d23625423".to_string() });
 
-    let listener = <Socks5Server>::bind("0.0.0.0:41080").await?;
+    let listener = <Socks5Server>::bind("0.0.0.0:37995").await?;
     let listener = listener.with_config(config);
 
     let mut incoming = listener.incoming();
 
-    info!("Listen for socks connections @ {}", "127.0.0.1:41080");
+    info!("Listen for socks connections @ {}", "0.0.0.0:37995");
 
     // Standard TCP loop
     while let Some(socket_res) = incoming.next().await {

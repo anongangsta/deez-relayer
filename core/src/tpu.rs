@@ -31,6 +31,8 @@ pub const DEFAULT_TPU_COALESCE_MS: u64 = 5;
 // allow multiple connections for NAT and any open/close overlap
 pub const MAX_QUIC_CONNECTIONS_PER_IP: usize = 8;
 
+pub const DEFAULT_MAX_CONNECTIONS_PER_IPADDR_PER_MINUTE: u64 = 8;
+
 #[derive(Debug)]
 pub struct TpuSockets {
     pub transactions_quic_sockets: Vec<UdpSocket>,

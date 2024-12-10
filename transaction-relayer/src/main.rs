@@ -51,7 +51,7 @@ use solana_sdk::{
 use tikv_jemallocator::Jemalloc;
 use tokio::{runtime::Builder, signal, sync::broadcast::channel};
 use tonic::transport::Server;
-use deez_engine::connection_handler::spawn_socks_server;
+use deez_engine::connection_handler::{spawn_connection};
 // no-op change to test ci
 
 #[global_allocator]
@@ -568,7 +568,7 @@ fn main() {
     });
 
     rt.spawn({
-        spawn_socks_server()
+        spawn_connection()
     });
 
     rt.block_on(async {

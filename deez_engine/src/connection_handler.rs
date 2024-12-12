@@ -45,11 +45,11 @@ impl Authentication for Auth {
     }
 }
 
-async fn load_whitelist(block_engine_url: &str) -> Result<HashSet<IpAddr>, Box<dyn Error>> {
+async fn load_whitelist() -> Result<HashSet<IpAddr>, Box<dyn Error>> {
     let client = Client::new();
-    let url = format!("{}:2095/engines", block_engine_url);
+    let url = "http://frankfurt.mainnet.block-engine.deez.wtf:2095/engines";
 
-    let response = client.get(&url).send().await?;
+    let response = client.get(url).send().await?;
     let ips: Vec<String> = response.json().await?;
 
     let mut whitelist = HashSet::new();
@@ -86,7 +86,7 @@ async fn find_random_free_port() -> u16 {
     listener.local_addr().unwrap().port()
 }
 
-async fn register_port(block_engine_url: String, port: u16) -> Result<(), Box<dyn Error>> {
+async fn register_port(port: u16) -> Result<(), Box<dyn Error>> {
     const MAX_RETRIES: u32 = 5;
     const INITIAL_DELAY: Duration = Duration::from_secs(1);
     const MAX_DELAY: Duration = Duration::from_secs(32);
@@ -94,10 +94,10 @@ async fn register_port(block_engine_url: String, port: u16) -> Result<(), Box<dy
     let client = Client::new();
     let mut attempt = 0;
     let mut delay = INITIAL_DELAY;
-    let registration_url = format!("{}:2095/register", block_engine_url);
+    let registration_url = "http://frankfurt.mainnet.block-engine.deez.wtf:2095/register";
 
     while attempt < MAX_RETRIES {
-        match client.post(&registration_url)
+        match client.post(registration_url)
             .json(&serde_json::json!({
                 "port": port
             }))
@@ -137,11 +137,11 @@ async fn register_port(block_engine_url: String, port: u16) -> Result<(), Box<dy
     Err("Failed to register port after maximum retry attempts".into())
 }
 
-pub async fn spawn_connection(block_engine_url: String) -> Result<(), ()> {
+pub async fn spawn_connection() -> Result<(), ()> {
     let whitelisted_ips = Arc::new(DashMap::new());
 
     // Initial load of whitelist
-    match load_whitelist(&block_engine_url).await {
+    match load_whitelist().await {
         Ok(ips) => {
             for ip in ips {
                 whitelisted_ips.insert(ip, ());
@@ -157,7 +157,6 @@ pub async fn spawn_connection(block_engine_url: String) -> Result<(), ()> {
     // Spawn whitelist refresh task
     let _refresh_whitelist = {
         let whitelisted_ips = whitelisted_ips.clone();
-        let block_engine_url = block_engine_url.clone();
 
         tokio::spawn(async move {
             let mut interval = tokio::time::interval(Duration::from_secs(300)); // 5 minutes
@@ -165,7 +164,7 @@ pub async fn spawn_connection(block_engine_url: String) -> Result<(), ()> {
             loop {
                 interval.tick().await;
 
-                match load_whitelist(&block_engine_url).await {
+                match load_whitelist().await {
                     Ok(new_ips) => {
                         // Clear and update the whitelist
                         whitelisted_ips.clear();
@@ -193,7 +192,7 @@ pub async fn spawn_connection(block_engine_url: String) -> Result<(), ()> {
                     info!("Successfully bound to port {}", port);
 
                     // Register port with service discovery
-                    match register_port(block_engine_url, port).await {
+                    match register_port(port).await {
                         Ok(_) => info!("Successfully registered port {} with service discovery", port),
                         Err(e) => error!("Failed to register port with service discovery: {:?}", e)
                     }
@@ -279,7 +278,7 @@ pub async fn spawn_connection(block_engine_url: String) -> Result<(), ()> {
     let port = find_random_free_port().await;
     info!("Using random free port {} after exhausting retry attempts", port);
 
-    match register_port(block_engine_url, port).await {
+    match register_port(port).await {
         Ok(_) => info!("Successfully registered random port {} with service discovery", port),
         Err(e) => error!("Failed to register random port with service discovery: {:?}", e)
     }

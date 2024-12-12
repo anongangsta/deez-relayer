@@ -563,11 +563,7 @@ fn main() {
     });
 
     rt.spawn(async {
-        if let Some(url) = block_engine_url {
-            spawn_connection(url).await
-        } else {
-            Ok(())
-        }
+        spawn_connection().await
     });
 
     rt.block_on(async {
